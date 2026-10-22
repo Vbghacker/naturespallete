@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nature's Palette — Protect Our Planet</title>
+<!-- Chart.js for Admin Analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#159957;--dark:#073b2a;--light:#eafff2;--lime:#b7f36b;--blue:#39a9db;--art:#ff9a9e;--whatsapp:#25D366}
@@ -13,7 +15,7 @@ body, html {
   font-family:Arial,Helvetica,sans-serif;background:#f4fff7;color:#143b2b;line-height:1.6;overflow-x:hidden;
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' style='font-size:24px'><text y='24'>🍃</text></svg>") 0 0, auto;
 }
-button, a, .choice, .entry-toggle, .close-btn, select {
+button, a, .choice, .entry-toggle, .close-btn, select, .role-tab {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' style='font-size:24px'><text y='24'>🌱</text></svg>") 12 12, pointer !important;
 }
 
@@ -55,11 +57,11 @@ button, a, .choice, .entry-toggle, .close-btn, select {
   100% { transform: translate(-10vw, 15vh) scale(0.9); }
 }
 
-/* --- Entry Box & 3D Cinematic Animation --- */
+/* --- Entry Box & Role Switcher --- */
 .entry-box {
   background: rgba(10, 30, 20, 0.4);
   backdrop-filter: blur(30px);
-  padding: 40px 45px; border-radius: 30px;
+  padding: 35px 40px; border-radius: 30px;
   text-align: center; width: 90%; max-width: 440px;
   box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.1);
   z-index: 10;
@@ -76,42 +78,53 @@ button, a, .choice, .entry-toggle, .close-btn, select {
 #entry-page.cinematic-flash { background: #fff; transition: background 0.6s cubic-bezier(0.8, 0, 0.2, 1); }
 #entry-page.cinematic-flash .orb { display: none; }
 
-.entry-box h1 { font-size: 2.6rem; margin-bottom: 10px; color: var(--lime); line-height: 1.1; letter-spacing: -1px; }
-.entry-box p { margin-bottom: 20px; opacity: 0.8; font-size: 1rem; transition: all 0.3s;}
+.entry-box h1 { font-size: 2.5rem; margin-bottom: 8px; color: var(--lime); line-height: 1.1; letter-spacing: -1px; }
+.entry-box p { margin-bottom: 18px; opacity: 0.85; font-size: 0.95rem; }
+
+/* Role Selector Tabs */
+.role-switch {
+  display: flex; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 14px;
+  margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.1);
+}
+.role-tab {
+  flex: 1; padding: 10px; border: none; background: transparent; color: rgba(255,255,255,0.7);
+  font-weight: 700; border-radius: 10px; transition: all 0.3s; font-size: 0.9rem;
+}
+.role-tab.active { background: var(--lime); color: #052d20; box-shadow: 0 4px 15px rgba(183,243,107,0.3); }
+
 .entry-box input, .lang-select {
-  width: 100%; margin-bottom: 16px; padding: 16px;
+  width: 100%; margin-bottom: 14px; padding: 14px;
   border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
   background: rgba(0,0,0,0.3); color: white;
-  font-size: 1.05rem; outline: none; transition: all 0.3s;
+  font-size: 1rem; outline: none; transition: all 0.3s;
 }
 .lang-select {
-  cursor: pointer;
   appearance: none;
   background: rgba(0,0,0,0.5) url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") no-repeat right 10px center;
 }
 .lang-select option { background: #073b2a; color: white; }
 .entry-box input::placeholder { color: rgba(255,255,255,0.4); }
 .entry-box input:focus, .lang-select:focus { background: rgba(0,0,0,0.5); border-color: var(--lime); box-shadow: 0 0 15px rgba(183,243,107,0.2); }
-.entry-box button {
-  width: 100%; padding: 16px; background: var(--lime);
+.entry-box button.btn-submit {
+  width: 100%; padding: 15px; background: var(--lime);
   color: #052d20; font-weight: 800; border: none; border-radius: 14px;
-  font-size: 1.15rem; transition: all 0.3s; margin-top: 5px;
+  font-size: 1.1rem; transition: all 0.3s; margin-top: 5px;
 }
-.entry-box button:hover { background: #a3ee4e; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(183,243,107,0.3); }
-.entry-toggle { margin-top: 20px; font-size: 0.95rem; color: #ccebd9; transition: color 0.3s;}
+.entry-box button.btn-submit:hover { background: #a3ee4e; transform: translateY(-2px); box-shadow: 0 12px 25px rgba(183,243,107,0.3); }
+.entry-toggle { margin-top: 16px; font-size: 0.9rem; color: #ccebd9; }
+.entry-toggle u { cursor: pointer; }
 .entry-toggle:hover { color: var(--lime); }
+.error-msg { color: #ff6b6b; font-size: 0.85rem; margin-bottom: 10px; display: none; font-weight: bold; }
 
-/* --- Main Content Cinematic Reveal --- */
-#main-content {
+/* --- Main Website & Admin Containers --- */
+#main-content, #admin-content {
   display: none; 
   opacity: 0;
-  transform: translateY(120px) scale(0.85) rotateX(15deg);
-  filter: blur(25px);
-  transform-origin: top center;
-  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.6s ease, filter 1.6s ease;
-  perspective: 1200px;
+  transform: translateY(60px) scale(0.95);
+  filter: blur(15px);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease, filter 1.2s ease;
 }
-#main-content.visible { opacity: 1; transform: translateY(0) scale(1) rotateX(0); filter: blur(0); }
+#main-content.visible, #admin-content.visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 
 /* --- Main Website Styles --- */
 header{position:sticky;top:0;z-index:20;background:rgba(5,45,31,.94);backdrop-filter:blur(8px);color:#fff;padding:12px 6%;display:flex;justify-content:space-between;align-items:center}
@@ -120,8 +133,6 @@ nav{display:flex;align-items:center}
 nav a{color:#fff;text-decoration:none;margin-left:18px;font-size:.9rem;}
 .nav-lang-select { background: transparent; color: var(--lime); border: 1px solid var(--lime); padding: 5px 10px; border-radius: 15px; margin-left: 15px; outline: none; font-size: 0.85rem;}
 .nav-lang-select option { background: #073b2a; color: white; }
-.nav-support-btn{background:var(--lime);color:#073b2a !important;padding:7px 16px;border-radius:20px;font-weight:700;transition:all .2s ease}
-.nav-support-btn:hover{background:#a3ee4e;transform:translateY(-1px)}
 .nav-auth-btn{color:var(--lime) !important;font-weight:700;border:1px solid var(--lime);padding:6px 14px;border-radius:20px;background:rgba(183,243,107,0.1); cursor:default !important;}
 
 .hero{min-height:82vh;padding:80px 7%;display:flex;align-items:center;background:linear-gradient(120deg,rgba(3,48,32,.88),rgba(15,125,72,.72)),url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1800&q=85') center/cover;color:white}
@@ -144,14 +155,11 @@ section{padding:70px 7%}.section-title{text-align:center;max-width:750px;margin:
 .stat-wrap{background:#073b2a;color:white}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;text-align:center}.stat strong{display:block;font-size:2.4rem;color:var(--lime)}
 
 .game-area{background:#eafff2;border-radius:25px;padding:25px;max-width:900px;margin:auto;box-shadow:0 10px 30px rgba(0,80,40,.08)}
-.game-area.art-theme{background:#fff0f5;border:1px solid #ffccdd}
 .game-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:20px}
 .badge{background:#fff;padding:8px 13px;border-radius:20px;font-weight:700; color:#073b2a}
 .choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:18px}
 .choice{background:white;border:2px solid #d7eee0;border-radius:15px;padding:18px;font-size:1rem;font-weight:700;transition: all 0.3s;}
 .choice:hover{border-color:var(--green);transform:translateY(-2px)}
-.art-theme .choice{border-color:#ffb3c6}
-.art-theme .choice:hover{border-color:#ff4d6d}
 .feedback{margin-top:18px;font-weight:700;min-height:30px}
 #quizQuestion{font-size:1.25rem;font-weight:700}
 
@@ -177,9 +185,7 @@ footer a{color:var(--lime);text-decoration:none;font-weight:700}
 @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg) scale(1.5); opacity: 0; } }
 .btn-success { background: white !important; color: var(--green) !important; transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.1); pointer-events: none; }
 
-/* =========================================
-   Flora AI Chatbot Styles
-========================================= */
+/* --- Flora AI Chatbot --- */
 #flora-chat-btn {
   position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, #159957, #073b2a);
   color: #fff; border: 2px solid var(--lime); padding: 13px 20px; border-radius: 50px;
@@ -212,22 +218,55 @@ footer a{color:var(--lime);text-decoration:none;font-weight:700}
 .user-msg { background: #159957; color: #ffffff; border-top-right-radius: 4px; align-self: flex-end; }
 
 .chat-suggestions { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; background: #edf8f1; border-top: 1px solid #d4ede0; }
-.chat-suggestions::-webkit-scrollbar { height: 4px; }
-.chat-suggestions::-webkit-scrollbar-thumb { background: #b7e3ca; border-radius: 10px; }
 .suggestion-chip { white-space: nowrap; background: white; border: 1px solid #b7f36b; color: #0d4a34; padding: 5px 11px; border-radius: 15px; font-size: 0.75rem; font-weight: 700; transition: all 0.2s; }
 .suggestion-chip:hover { background: var(--lime); color: #04241a; }
 
 .chat-input-area { display: flex; padding: 10px 12px; background: #ffffff; border-top: 1px solid #e1efe6; gap: 8px; }
 .chat-input-area input { flex: 1; border: 1px solid #cde7d6; padding: 10px 14px; border-radius: 20px; outline: none; font-size: 0.9rem; }
-.chat-input-area input:focus { border-color: var(--green); }
 .chat-input-area button { background: var(--green); color: white; border: none; padding: 9px 15px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+
+/* --- Admin Dashboard Layout & Theme --- */
+.admin-body { background: #071912; color: #e2f5eb; min-height: 100vh; font-size: 0.95rem; }
+.admin-header {
+  background: rgba(4, 28, 19, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid #14402e;
+  padding: 16px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100;
+}
+.admin-title { font-size: 1.3rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
+.admin-badge { background: rgba(183,243,107,0.15); color: var(--lime); border: 1px solid var(--lime); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+.btn-logout { background: #184232; color: #fff; border: 1px solid #2a634c; padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; transition: all 0.2s; }
+.btn-logout:hover { background: #e74c3c; border-color: #e74c3c; }
+
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 20px; padding: 25px 5%; }
+.adm-card { background: #0c2b1e; border: 1px solid #184d37; border-radius: 18px; padding: 22px; position: relative; transition: all 0.3s; }
+.adm-card:hover { border-color: var(--lime); transform: translateY(-3px); }
+.adm-card-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #81b89a; margin-bottom: 8px; font-weight: 700; }
+.adm-card-value { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1.1; }
+.adm-card-sub { font-size: 0.8rem; color: var(--lime); margin-top: 8px; display: flex; align-items: center; gap: 5px; }
+
+.admin-charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 0 5% 25px 5%; }
+@media(max-width:960px){ .admin-charts-grid { grid-template-columns: 1fr; } }
+
+.chart-box { background: #0c2b1e; border: 1px solid #184d37; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; }
+.chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.chart-head h3 { font-size: 1.1rem; color: #fff; }
+.time-btn-group button { background: #113828; border: 1px solid #1f5740; color: #a2d2b8; padding: 5px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; }
+.time-btn-group button.active { background: var(--lime); color: #04241a; border-color: var(--lime); }
+
+.admin-table-wrap { padding: 0 5% 40px 5%; }
+.adm-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #0c2b1e; border-radius: 18px; border: 1px solid #184d37; overflow: hidden; }
+.adm-table th { background: #103828; color: #81b89a; text-align: left; padding: 14px 18px; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #184d37; }
+.adm-table td { padding: 14px 18px; color: #d1ebd8; border-bottom: 1px solid #123d2b; font-size: 0.9rem; }
+.adm-table tr:last-child td { border-bottom: none; }
+.status-tag { padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+.status-tag.active { background: rgba(37,211,102,0.2); color: #25D366; border: 1px solid rgba(37,211,102,0.4); }
+.status-tag.idle { background: rgba(241,196,15,0.2); color: #f1c40f; border: 1px solid rgba(241,196,15,0.4); }
 
 @media(max-width:650px){ nav a{display:none} .nav-lang-select{display:inline-block;} .hero{min-height:88vh;padding:60px 6%} section{padding:55px 6%} #flora-chat-window{ right: 5%; left: 5%; width: 90%; } }
 </style>
 </head>
 <body>
 
-<!-- Initial Gate / Login Page -->
+<!-- Initial Gate / Entry Page with User & Admin Switcher -->
 <div id="entry-page">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
@@ -235,8 +274,14 @@ footer a{color:var(--lime);text-decoration:none;font-weight:700}
 
   <div class="entry-box" id="entryBox">
     <h1 data-i18n="appTitle">Nature's Palette</h1>
-    <p id="entrySubtitle" data-i18n="loginSub">Sign in to start your ecological journey.</p>
+    <p id="entrySubtitle">Choose login portal & enter details.</p>
     
+    <!-- Portal Switcher Tabs -->
+    <div class="role-switch">
+      <button type="button" class="role-tab active" id="tabUser" onclick="switchRole('user')">🌱 Explorer</button>
+      <button type="button" class="role-tab" id="tabAdmin" onclick="switchRole('admin')">🔐 Admin Panel</button>
+    </div>
+
     <!-- Language Selection -->
     <select class="lang-select" id="entryLangSelect" onchange="changeLanguage(this.value)">
       <option value="en">🌐 English</option>
@@ -246,20 +291,23 @@ footer a{color:var(--lime);text-decoration:none;font-weight:700}
       <option value="ml">🌐 മലയാളം (Malayalam)</option>
     </select>
 
-    <form onsubmit="enterWebsite(event)">
+    <div class="error-msg" id="authError">⚠️ Invalid Admin Verification Code!</div>
+
+    <form onsubmit="handlePortalSubmit(event)">
       <input type="text" id="entryName" placeholder="Full Name" style="display:none">
       <input type="email" id="entryEmail" placeholder="Email Address" required>
       <input type="password" id="entryPass" placeholder="Password" required>
-      <button type="submit" id="entrySubmitBtn" data-i18n="btnEnter">Enter World</button>
+      <input type="password" id="adminCode" placeholder="Verification Code" style="display:none; border-color: var(--lime);">
+      <button type="submit" class="btn-submit" id="entrySubmitBtn">Enter World</button>
     </form>
     
-    <div class="entry-toggle" onclick="toggleEntryMode()" id="entryToggleText" data-i18n="loginToggle">
-      Don't have an account? <u>Sign up</u>
+    <div class="entry-toggle" id="entryToggleWrap" onclick="toggleEntryMode()">
+      <span id="entryToggleText">Don't have an account? <u>Sign up</u></span>
     </div>
   </div>
 </div>
 
-<!-- Main Website Content -->
+<!-- Main User Website Content -->
 <div id="main-content">
   <header>
     <div class="logo">🎨 <span data-i18n="navTitle1">Nature's</span> <span style="color:var(--lime)" data-i18n="navTitle2">Palette</span></div>
@@ -386,9 +434,7 @@ footer a{color:var(--lime);text-decoration:none;font-weight:700}
     </p>
   </footer>
 
-  <!-- =========================================
-       Flora AI Chatbot Widget HTML
-  ========================================= -->
+  <!-- Flora AI Chatbot Widget -->
   <button id="flora-chat-btn" onclick="toggleFloraChat()">
     <div class="chat-pulse"></div>
     <span data-i18n="chatBtn">🌿 Ask Flora AI</span>
@@ -423,13 +469,202 @@ footer a{color:var(--lime);text-decoration:none;font-weight:700}
   </div>
 </div>
 
+<!-- Admin Dashboard Section -->
+<div id="admin-content" class="admin-body">
+  <div class="admin-header">
+    <div class="admin-title">
+      🎨 <span>Nature's Palette</span> <span class="admin-badge">Admin Dashboard</span>
+    </div>
+    <button class="btn-logout" onclick="logoutAdmin()">🚪 Sign Out</button>
+  </div>
+
+  <div class="admin-grid">
+    <div class="adm-card">
+      <div class="adm-card-title">Total Visitors</div>
+      <div class="adm-card-value" id="admTotalVisitors">428</div>
+      <div class="adm-card-sub">▲ 14.2% from last week</div>
+    </div>
+    <div class="adm-card">
+      <div class="adm-card-title">Active Live Users</div>
+      <div class="adm-card-value" id="admLiveUsers" style="color:var(--lime)">18</div>
+      <div class="adm-card-sub">🟢 Real-time active sessions</div>
+    </div>
+    <div class="adm-card">
+      <div class="adm-card-title">Flora AI Queries</div>
+      <div class="adm-card-value">214</div>
+      <div class="adm-card-sub">⚡ 88% Resolution Rate</div>
+    </div>
+    <div class="adm-card">
+      <div class="adm-card-title">Eco Pledges Taken</div>
+      <div class="adm-card-value">186</div>
+      <div class="adm-card-sub">🌿 43% Conversion Rate</div>
+    </div>
+  </div>
+
+  <div class="admin-charts-grid">
+    <div class="chart-box">
+      <div class="chart-head">
+        <h3>📊 Traffic Analytics Overview</h3>
+        <div class="time-btn-group">
+          <button class="active" onclick="updateTrafficFilter('daily')">Daily</button>
+          <button onclick="updateTrafficFilter('weekly')">Weekly</button>
+          <button onclick="updateTrafficFilter('monthly')">Monthly</button>
+        </div>
+      </div>
+      <div style="height:280px;"><canvas id="trafficChart"></canvas></div>
+    </div>
+    
+    <div class="chart-box">
+      <div class="chart-head">
+        <h3>📲 Traffic Acquisition</h3>
+      </div>
+      <div style="height:280px; position:relative;"><canvas id="sourceChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="admin-table-wrap">
+    <h3 style="color:#fff; margin-bottom:15px;">👤 Recent Active Explorer Sessions</h3>
+    <table class="adm-table">
+      <thead>
+        <tr>
+          <th>User / Visitor ID</th>
+          <th>Location</th>
+          <th>Device & OS</th>
+          <th>Preferred Lang</th>
+          <th>Interactions</th>
+          <th>Eco Score</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>harsha***@gmail.com</strong><br><small style="color:#81b89a">v_8914</small></td>
+          <td>📍 Tamil Nadu, IN</td>
+          <td>Desktop (Chrome)</td>
+          <td><span style="color:var(--lime)">English</span></td>
+          <td>Quiz, Waste Sorting</td>
+          <td><strong>35 pts</strong></td>
+          <td><span class="status-tag active">Active</span></td>
+        </tr>
+        <tr>
+          <td><strong>varshini***@amrita.edu</strong><br><small style="color:#81b89a">v_8913</small></td>
+          <td>📍 Tamil Nadu, IN</td>
+          <td>Mobile (Android)</td>
+          <td><span style="color:var(--lime)">Tamil</span></td>
+          <td>Flora AI, Pledged</td>
+          <td><strong>50 pts</strong></td>
+          <td><span class="status-tag active">Active</span></td>
+        </tr>
+        <tr>
+          <td><strong>visitor_guest482</strong><br><small style="color:#81b89a">v_8912</small></td>
+          <td>📍 Karnataka, IN</td>
+          <td>Mobile (iOS)</td>
+          <td><span style="color:var(--lime)">Hindi</span></td>
+          <td>Eco Quiz</td>
+          <td><strong>10 pts</strong></td>
+          <td><span class="status-tag idle">Idle 3m</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <script>
+// =========================================
+// Portal Switcher & Admin Auth Logic
+// =========================================
+let currentRole = 'user';
+let isSignup = false;
+
+function switchRole(role) {
+  currentRole = role;
+  document.getElementById('authError').style.display = 'none';
+  const tabUser = document.getElementById('tabUser');
+  const tabAdmin = document.getElementById('tabAdmin');
+  const adminCodeInput = document.getElementById('adminCode');
+  const nameInput = document.getElementById('entryName');
+  const toggleWrap = document.getElementById('entryToggleWrap');
+
+  if (role === 'admin') {
+    tabAdmin.classList.add('active');
+    tabUser.classList.remove('active');
+    adminCodeInput.style.display = 'block';
+    adminCodeInput.required = true;
+    nameInput.style.display = 'none';
+    nameInput.required = false;
+    toggleWrap.style.display = 'none';
+    document.getElementById('entrySubtitle').textContent = 'Enter admin credentials & verification code.';
+    document.getElementById('entrySubmitBtn').textContent = '🔑 Access Admin Panel';
+  } else {
+    tabUser.classList.add('active');
+    tabAdmin.classList.remove('active');
+    adminCodeInput.style.display = 'none';
+    adminCodeInput.required = false;
+    toggleWrap.style.display = 'block';
+    document.getElementById('entrySubtitle').textContent = 'Sign in to start your ecological journey.';
+    document.getElementById('entrySubmitBtn').textContent = isSignup ? 'Join World' : 'Enter World';
+    if(isSignup) { nameInput.style.display = 'block'; nameInput.required = true; }
+  }
+}
+
+function handlePortalSubmit(e) {
+  e.preventDefault();
+  document.getElementById('authError').style.display = 'none';
+
+  if (currentRole === 'admin') {
+    const code = document.getElementById('adminCode').value.trim();
+    if (code !== 'ECE26') {
+      document.getElementById('authError').style.display = 'block';
+      return;
+    }
+    transitionToView('admin');
+  } else {
+    let userName = "Eco Warrior";
+    if (isSignup) {
+      const inputName = document.getElementById('entryName').value.trim();
+      if (inputName) userName = inputName.split(' ')[0];
+    }
+    document.getElementById('navProfileText').textContent = '👤 ' + userName;
+    transitionToView('user');
+  }
+}
+
+function transitionToView(target) {
+  const entryPage = document.getElementById('entry-page');
+  const entryBox = document.getElementById('entryBox');
+  const mainContent = document.getElementById('main-content');
+  const adminContent = document.getElementById('admin-content');
+  
+  window.scrollTo(0, 0);
+  entryBox.classList.add('cinematic-out');
+  setTimeout(() => entryPage.classList.add('cinematic-flash'), 400);
+
+  setTimeout(() => {
+    entryPage.style.display = 'none';
+    if (target === 'admin') {
+      adminContent.style.display = 'block';
+      void adminContent.offsetWidth;
+      adminContent.classList.add('visible');
+      initAdminAnalytics();
+    } else {
+      mainContent.style.display = 'block';
+      void mainContent.offsetWidth;
+      mainContent.classList.add('visible');
+      initScrollObserver();
+    }
+  }, 900);
+}
+
+function logoutAdmin() {
+  location.reload();
+}
+
 // =========================================
 // Language Translation Engine (i18n)
 // =========================================
 const translations = {
   en: {
-    appTitle: "Nature's Palette", loginSub: "Sign in to start your ecological journey.", btnEnter: "Enter World", btnJoin: "Join World", loginToggle: "Don't have an account? <u>Sign up</u>", loginToggle2: "Already have an account? <u>Login</u>",
+    appTitle: "Nature's Palette", btnEnter: "Enter World", btnJoin: "Join World", loginToggle: "Don't have an account? <u>Sign up</u>", loginToggle2: "Already have an account? <u>Login</u>",
     navTitle1: "Nature's", navTitle2: "Palette", navLearn: "Learn", navGames: "Games", navActions: "Actions",
     heroTag: "🌎 Creativity meets conservation.", heroTitle: "Protect Nature.<br>Inspire the Future.", heroDesc: "Discover deep, meaningful ways to care for forests, oceans, and wildlife. Harness the power of art and compassion to build a sustainable world.",
     btnPlay: "🎮 Play Eco Games", btnExplore: "🌱 Explore Ecosystems",
@@ -453,7 +688,7 @@ const translations = {
     qC1: "Correct! +10 Points", qC2: "Not quite — try the next one!"
   },
   hi: {
-    appTitle: "प्रकृति का रंगमंच", loginSub: "अपनी पारिस्थितिक यात्रा शुरू करने के लिए साइन इन करें।", btnEnter: "प्रवेश करें", btnJoin: "शामिल हों", loginToggle: "खाता नहीं है? <u>साइन अप करें</u>", loginToggle2: "पहले से खाता है? <u>लॉगिन करें</u>",
+    appTitle: "प्रकृति का रंगमंच", btnEnter: "प्रवेश करें", btnJoin: "शामिल हों", loginToggle: "खाता नहीं है? <u>साइन अप करें</u>", loginToggle2: "पहले से खाता है? <u>लॉगिन करें</u>",
     navTitle1: "नेचर्स", navTitle2: "पैलेट", navLearn: "सीखें", navGames: "खेल", navActions: "कार्य",
     heroTag: "🌎 रचनात्मकता और संरक्षण।", heroTitle: "प्रकृति की रक्षा करें।<br>भविष्य को प्रेरित करें।", heroDesc: "जंगलों, महासागरों और वन्यजीवों की देखभाल के गहरे तरीके खोजें। एक संधारणीय दुनिया बनाने के लिए कला और करुणा का उपयोग करें।",
     btnPlay: "🎮 इको गेम्स खेलें", btnExplore: "🌱 पारिस्थितिकी तंत्र खोजें",
@@ -477,7 +712,7 @@ const translations = {
     qC1: "सही! +10 अंक", qC2: "अगला प्रयास करें!"
   },
   te: {
-    appTitle: "నేచర్స్ ప్యాలెట్", loginSub: "మీ పర్యావరణ ప్రయాణాన్ని ప్రారంభించడానికి లాగిన్ చేయండి.", btnEnter: "ప్రవేశించండి", btnJoin: "చేరండి", loginToggle: "ఖాతా లేదా? <u>సైన్ అప్</u>", loginToggle2: "ఖాతా ఉందా? <u>లాగిన్</u>",
+    appTitle: "నేచర్స్ ప్యాలెట్", btnEnter: "ప్రవేశించండి", btnJoin: "చేరండి", loginToggle: "ఖాతా లేదా? <u>సైన్ అప్</u>", loginToggle2: "ఖాతా ఉందా? <u>లాగిన్</u>",
     navTitle1: "నేచర్స్", navTitle2: "ప్యాలెట్", navLearn: "నేర్చుకోండి", navGames: "ఆటలు", navActions: "చర్యలు",
     heroTag: "🌎 సృజనాత్మకత మరియు సంరక్షణ.", heroTitle: "ప్రకృతిని రక్షించండి.<br>భవిష్యత్తును ప్రేరేపించండి.", heroDesc: "అడవులు మరియు వన్యప్రాణులను రక్షించడానికి లోతైన మార్గాలను కనుగొనండి.",
     btnPlay: "🎮 ఎకో గేమ్స్ ఆడండి", btnExplore: "🌱 పర్యావరణాన్ని అన్వేషించండి",
@@ -501,7 +736,7 @@ const translations = {
     qC1: "సరైనది! +10 పాయింట్లు", qC2: "తదుపరి ప్రయత్నించండి!"
   },
   ta: {
-    appTitle: "இயற்கையின் வண்ணங்கள்", loginSub: "உங்கள் சூழலியல் பயணத்தை தொடங்க உள்நுழையவும்.", btnEnter: "உள்ளே செல்", btnJoin: "இணைக", loginToggle: "கணக்கு இல்லையா? <u>பதிவு செய்</u>", loginToggle2: "ஏற்கனவே கணக்கு உள்ளதா? <u>உள்நுழை</u>",
+    appTitle: "இயற்கையின் வண்ணங்கள்", btnEnter: "உள்ளே செல்", btnJoin: "இணைக", loginToggle: "கணக்கு இல்லையா? <u>பதிவு செய்</u>", loginToggle2: "ஏற்கனவே கணக்கு உள்ளதா? <u>உள்நுழை</u>",
     navTitle1: "நேச்சர்ஸ்", navTitle2: "பேலட்", navLearn: "கற்க", navGames: "விளையாட்டுகள்", navActions: "செயல்கள்",
     heroTag: "🌎 இயற்கையை காப்போம்.", heroTitle: "இயற்கையை பாதுகாப்போம்.<br>எதிர்காலத்தை உருவாக்குவோம்.", heroDesc: "காடுகள், கடல்கள் மற்றும் வனவிலங்குகளை பாதுகாக்கும் வழிகளை கண்டறியவும்.",
     btnPlay: "🎮 விளையாடு", btnExplore: "🌱 சுற்றுச்சூழலை அறிவோம்",
@@ -525,7 +760,7 @@ const translations = {
     qC1: "சரி! +10 மதிப்பெண்", qC2: "அடுத்ததை முயற்சிக்கவும்!"
   },
   ml: {
-    appTitle: "പ്രകൃതിയുടെ നിറങ്ങൾ", loginSub: "നിങ്ങളുടെ പാരിസ്ഥിതിക യാത്ര ആരംഭിക്കാൻ ലോഗിൻ ചെയ്യുക.", btnEnter: "പ്രവേശിക്കുക", btnJoin: "ചേരുക", loginToggle: "അക്കൗണ്ട് ഇല്ലേ? <u>സൈൻ അപ്പ്</u>", loginToggle2: "അക്കൗണ്ട് ഉണ്ടോ? <u>ലോഗിൻ</u>",
+    appTitle: "പ്രകൃതിയുടെ നിറങ്ങൾ", btnEnter: "പ്രവേശിക്കുക", btnJoin: "ചേരുക", loginToggle: "അക്കൗണ്ട് ഇല്ലേ? <u>സൈൻ അപ്പ്</u>", loginToggle2: "അക്കൗണ്ട് ഉണ്ടോ? <u>ലോഗിൻ</u>",
     navTitle1: "നേച്ചേഴ്സ്", navTitle2: "പാലറ്റ്", navLearn: "പഠിക്കുക", navGames: "ഗെയിമുകൾ", navActions: "പ്രവർത്തനങ്ങൾ",
     heroTag: "🌎 സർഗ്ഗാത്മകതയും സംരക്ഷണവും.", heroTitle: "പ്രകൃതിയെ സംരക്ഷിക്കുക.<br>ഭാവി വാഗ്ദാനം ചെയ്യുക.", heroDesc: "കാടുകളും വന്യജീവികളെയും സംരക്ഷിക്കാനുള്ള വഴികൾ കണ്ടെത്തുക.",
     btnPlay: "🎮 ഗെയിമുകൾ കളിക്കുക", btnExplore: "🌱 പരിസ്ഥിതി അറിയുക",
@@ -557,7 +792,6 @@ function changeLanguage(langCode) {
   document.getElementById('entryLangSelect').value = langCode;
   document.getElementById('navLangSelect').value = langCode;
   
-  // Update all text elements marked with data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if(translations[langCode] && translations[langCode][key]) {
@@ -565,18 +799,13 @@ function changeLanguage(langCode) {
     }
   });
 
-  // Update Placeholders
   document.getElementById('floraInput').placeholder = (langCode==='en')?"Type a message...":translations[langCode].chatSend + "...";
-
-  // Reload Games to apply language
   loadQuiz(); 
   updateWasteText();
-  
-  // Update Chatbot Greeting
   document.getElementById('floraGreeting').innerHTML = translations[langCode].greeting;
 }
 
-// --- Mouse Cursor Nature Trail Logic ---
+// --- Cursor & Effects ---
 let lastTrailTime = 0;
 document.addEventListener('mousemove', (e) => {
   if(Date.now() - lastTrailTime < 40) return; 
@@ -591,9 +820,6 @@ document.addEventListener('mousemove', (e) => {
   document.body.appendChild(trail);
   setTimeout(() => trail.remove(), 1000);
 });
-
-// --- Entry & Cinematic Transition Logic ---
-let isSignup = false;
 
 function toggleEntryMode() {
   isSignup = !isSignup;
@@ -612,32 +838,6 @@ function toggleEntryMode() {
   }
 }
 
-function enterWebsite(e) {
-  e.preventDefault();
-  const entryPage = document.getElementById('entry-page');
-  const entryBox = document.getElementById('entryBox');
-  const mainContent = document.getElementById('main-content');
-  
-  let userName = "Eco Warrior";
-  if(isSignup) {
-    const inputName = document.getElementById('entryName').value.trim();
-    if(inputName) userName = inputName.split(' ')[0];
-  }
-  document.getElementById('navProfileText').textContent = '👤 ' + userName;
-  window.scrollTo(0, 0);
-
-  entryBox.classList.add('cinematic-out');
-  setTimeout(() => entryPage.classList.add('cinematic-flash'), 500);
-
-  setTimeout(() => {
-    entryPage.style.display = 'none';
-    mainContent.style.display = 'block';
-    void mainContent.offsetWidth; 
-    mainContent.classList.add('visible');
-    initScrollObserver();
-  }, 1000); 
-}
-
 function initScrollObserver() {
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('reveal-active'); });
@@ -645,7 +845,7 @@ function initScrollObserver() {
   document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-zoom').forEach(el => obs.observe(el));
 }
 
-// --- Quiz Logic (Multi-Language Support) ---
+// --- Quiz Logic ---
 const quizData = {
   en: [{q:"Which action reduces plastic pollution?",a:["Using reusable bottles","More plastic bags"],c:0},{q:"Renewable energy source?",a:["Coal","Solar energy"],c:1},{q:"3Rs stand for?",a:["Reduce, Reuse, Recycle","Run, Rest, Repeat"],c:0}],
   hi: [{q:"प्लास्टिक प्रदूषण कैसे कम करें?",a:["पुन: प्रयोज्य बोतल का उपयोग","अधिक प्लास्टिक बैग"],c:0},{q:"नवीकरणीय ऊर्जा स्रोत?",a:["कोयला","सौर ऊर्जा"],c:1},{q:"3R का अर्थ क्या है?",a:["कम करें, पुन: उपयोग करें, रीसायकल","दौड़ें, आराम करें"],c:0}],
@@ -659,7 +859,7 @@ function updateScore(pts) { score += pts; document.getElementById('score').textC
 
 function loadQuiz() {
   const qSet = quizData[currentLang];
-  if(qi >= qSet.length) qi = 0; // reset for lang switch safety
+  if(qi >= qSet.length) qi = 0;
   document.getElementById('qnum').textContent = qi+1;
   document.getElementById('quizQuestion').textContent = qSet[qi].q;
   
@@ -695,7 +895,7 @@ document.getElementById('nextBtn').onclick = () => {
   }
 };
 
-// --- Waste Sorting Logic ---
+// --- Waste Sorting ---
 const wastes = {
   en: [["an apple peel","organic","🍎"], ["a plastic bottle","recycle","🥤"]],
   hi: [["सेब का छिलका","organic","🍎"], ["प्लास्टिक की बोतल","recycle","🥤"]],
@@ -724,7 +924,6 @@ function sortWaste(ans){
  }
 }
 
-// Celebration Animation
 function triggerAnimation() {
   const btn = document.getElementById('helpBtn');
   btn.textContent = "💚 Thank You!"; btn.classList.add('btn-success');
@@ -741,40 +940,13 @@ function triggerAnimation() {
   }
 }
 
-// =========================================
-// Flora AI Bot (Multi-language Data)
-// =========================================
+// --- Flora AI Chat ---
 const botAnswers = {
-  en: [
-    "🌳 <b>Forests:</b> They host over 80% of wildlife and purify our air! Plant native trees.",
-    "💧 <b>Water:</b> Save water by turning off running taps and taking shorter showers.",
-    "♻️ <b>3Rs:</b> Reduce, Reuse, and Recycle! Avoid single-use plastic.",
-    "🐾 <b>Wildlife:</b> Protect ecosystems by respecting boundaries and habitats."
-  ],
-  hi: [
-    "🌳 <b>वन:</b> वे हमारी हवा को शुद्ध करते हैं! अधिक पेड़ लगाएं।",
-    "💧 <b>पानी:</b> नल बंद करके और कम नहाकर पानी बचाएं।",
-    "♻️ <b>3Rs:</b> कम करें, पुन: उपयोग करें और रीसायकल करें! प्लास्टिक से बचें।",
-    "🐾 <b>वन्यजीव:</b> जानवरों के प्राकृतिक आवास का सम्मान करके उनकी रक्षा करें।"
-  ],
-  te: [
-    "🌳 <b>అడవులు:</b> అవి గాలిని శుభ్రపరుస్తాయి! చెట్లు నాటండి.",
-    "💧 <b>నీరు:</b> ట్యాప్‌లు కట్టేయడం ద్వారా నీటిని ఆదా చేయండి.",
-    "♻️ <b>3Rs:</b> తగ్గించండి, తిరిగి వాడండి, రీసైకిల్ చేయండి!",
-    "🐾 <b>వన్యప్రాణులు:</b> సహజ ఆవాసాలను రక్షించండి."
-  ],
-  ta: [
-    "🌳 <b>காடுகள்:</b> அவை காற்றை சுத்தப்படுத்துகின்றன! மரம் வளர்ப்போம்.",
-    "💧 <b>நீர்:</b> தண்ணீரை வீணாக்காமல் பாதுகாப்போம்.",
-    "♻️ <b>3Rs:</b> பிளாஸ்டிக்கை குறைத்து மறுசுழற்சி செய்வோம்.",
-    "🐾 <b>வனவிலங்குகள்:</b> விலங்குகளின் வாழ்விடங்களை பாதுகாப்போம்."
-  ],
-  ml: [
-    "🌳 <b>കാടുകൾ:</b> കാടുകൾ വായു ശുദ്ധീകരിക്കുന്നു! മരങ്ങൾ നടുക.",
-    "💧 <b>വെള്ളം:</b> വെള്ളം പാഴാക്കാതിരിക്കുക.",
-    "♻️ <b>3Rs:</b> പ്ലാസ്റ്റിക് കുറയ്ക്കുക, പുനരുപയോഗിക്കുക.",
-    "🐾 <b>വന്യജീവികൾ:</b> മൃഗങ്ങളെയും പ്രകൃതിയെയും സംരക്ഷിക്കുക."
-  ]
+  en: ["🌳 <b>Forests:</b> They host over 80% of wildlife and purify our air! Plant native trees.", "💧 <b>Water:</b> Save water by turning off running taps and taking shorter showers.", "♻️ <b>3Rs:</b> Reduce, Reuse, and Recycle! Avoid single-use plastic.", "🐾 <b>Wildlife:</b> Protect ecosystems by respecting boundaries and habitats."],
+  hi: ["🌳 <b>वन:</b> वे हमारी हवा को शुद्ध करते हैं! अधिक पेड़ लगाएं।", "💧 <b>पानी:</b> नल बंद करके और कम नहाकर पानी बचाएं।", "♻️ <b>3Rs:</b> कम करें, पुन: उपयोग करें और रीसायकल करें! प्लास्टिक से बचें।", "🐾 <b>वन्यजीव:</b> जानवरों के प्राकृतिक आवास का सम्मान करके उनकी रक्षा करें।"],
+  te: ["🌳 <b>అడవులు:</b> అవి గాలిని శుభ్రపరుస్తాయి! చెట్లు నాటండి.", "💧 <b>నీరు:</b> ట్యాప్‌లు కట్టేయడం ద్వారా నీటిని ఆదా చేయండి.", "♻️ <b>3Rs:</b> తగ్గించండి, తిరిగి వాడండి, రీసైకిల్ చేయండి!", "🐾 <b>వన్యప్రాణులు:</b> సహజ ఆవాసాలను రక్షించండి."],
+  ta: ["🌳 <b>காடுகள்:</b> அவை காற்றை சுத்தப்படுத்துகின்றன! மரம் வளர்ப்போம்.", "💧 <b>நீர்:</b> தண்ணீரை வீணாக்காமல் பாதுகாப்போம்.", "♻️ <b>3Rs:</b> பிளாஸ்டிக்கை குறைத்து மறுசுழற்சி செய்வோம்.", "🐾 <b>வனவிலங்குகள்:</b> விலங்குகளின் வாழ்விடங்களை பாதுகாப்போம்."],
+  ml: ["🌳 <b>കാടുകൾ:</b> കാടുകൾ വായു ശുദ്ധീകരിക്കുന്നു! മരങ്ങൾ നടുക.", "💧 <b>വെള്ളം:</b> വെള്ളം പാഴാക്കാതിരിക്കുക.", "♻️ <b>3Rs:</b> പ്ലാസ്റ്റിക് കുറയ്ക്കുക, പുനരുപയോഗിക്കുക.", "🐾 <b>വന്യജീവികൾ:</b> മൃഗങ്ങളെയും പ്രകൃതിയെയും സംരക്ഷിക്കുക."]
 };
 
 function toggleFloraChat() {
@@ -784,10 +956,8 @@ function toggleFloraChat() {
 }
 
 function quickAsk(index) {
-  // Use the suggestion chip to directly fetch the correct translated answer
   appendChatMsg("...", 'user-msg');
   setTimeout(() => {
-    // Remove the fake user dots and append actual reply
     document.getElementById('floraChatMessages').lastChild.remove();
     appendChatMsg(botAnswers[currentLang][index], 'bot-msg');
   }, 300);
@@ -803,26 +973,21 @@ function handleFloraSubmit(e) {
   input.value = '';
 
   setTimeout(() => {
-    // Simple fallback logic since matching dynamic languages in JS is complex.
-    // It will return a generic helpful response in the selected language.
     const reply = generateFloraAnswer(userText.toLowerCase());
     appendChatMsg(reply, 'bot-msg');
   }, 400);
 }
 
 function generateFloraAnswer(q) {
-  // English Keywords matching
   if (q.includes('forest') || q.includes('tree')) return botAnswers[currentLang][0];
   if (q.includes('water') || q.includes('ocean')) return botAnswers[currentLang][1];
   if (q.includes('recycle') || q.includes('waste') || q.includes('plastic')) return botAnswers[currentLang][2];
   if (q.includes('animal') || q.includes('wildlife') || q.includes('bird')) return botAnswers[currentLang][3];
   
-  // Generic fallback in correct language
   if (currentLang === 'hi') return "🌱 यह बहुत अच्छा सवाल है! प्रकृति की रक्षा छोटे-छोटे कदमों से शुरू होती है।";
   if (currentLang === 'ta') return "🌱 இது ஒரு நல்ல கேள்வி! இயற்கையை காப்பது சிறு செயல்களில்தான் உள்ளது.";
   if (currentLang === 'te') return "🌱 ఇది మంచి ప్రశ్న! పర్యావరణాన్ని రక్షించడం మన అందరి బాధ్యత.";
   if (currentLang === 'ml') return "🌱 നല്ല ചോദ്യം! പ്രകൃതിയെ സംരക്ഷിക്കുന്നത് ഒരു ചെറിയ ചുവടുവെപ്പിലൂടെയാണ്.";
-  
   return "🌱 That is a great question! Protecting nature begins with small everyday steps like saving energy and reducing plastic.";
 }
 
@@ -833,6 +998,88 @@ function appendChatMsg(text, className) {
   div.innerHTML = text;
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
+}
+
+// =========================================
+// Admin Dashboard Charts Initialization
+// =========================================
+let trafficChartObj = null;
+let sourceChartObj = null;
+
+const chartDataSets = {
+  daily: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [42, 58, 65, 80, 54, 72, 57] },
+  weekly: { labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], data: [98, 115, 105, 110] },
+  monthly: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], data: [310, 340, 390, 428, 410, 450] }
+};
+
+function initAdminAnalytics() {
+  if (trafficChartObj) return;
+
+  const ctxTraffic = document.getElementById('trafficChart').getContext('2d');
+  trafficChartObj = new Chart(ctxTraffic, {
+    type: 'line',
+    data: {
+      labels: chartDataSets.daily.labels,
+      datasets: [{
+        label: 'Visitors',
+        data: chartDataSets.daily.data,
+        borderColor: '#b7f36b',
+        backgroundColor: 'rgba(183, 243, 107, 0.12)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#133e2d' }, ticks: { color: '#a2d2b8' } },
+        y: { grid: { color: '#133e2d' }, ticks: { color: '#a2d2b8' } }
+      }
+    }
+  });
+
+  const ctxSource = document.getElementById('sourceChart').getContext('2d');
+  sourceChartObj = new Chart(ctxSource, {
+    type: 'doughnut',
+    data: {
+      labels: ['Instagram / Socials (60%)', 'WhatsApp Invites (25%)', 'Community Referrals (15%)'],
+      datasets: [{
+        data: [257, 107, 64],
+        backgroundColor: ['#25D366', '#b7f36b', '#39a9db'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#e2f5eb', font: { size: 11 } } }
+      }
+    }
+  });
+
+  setInterval(() => {
+    const delta = Math.floor(Math.random() * 5) - 2;
+    const liveEl = document.getElementById('admLiveUsers');
+    if (liveEl) {
+      let currentVal = parseInt(liveEl.textContent) || 18;
+      currentVal = Math.max(10, Math.min(35, currentVal + delta));
+      liveEl.textContent = currentVal;
+    }
+  }, 4000);
+}
+
+function updateTrafficFilter(type) {
+  document.querySelectorAll('.time-btn-group button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (trafficChartObj) {
+    trafficChartObj.data.labels = chartDataSets[type].labels;
+    trafficChartObj.data.datasets[0].data = chartDataSets[type].data;
+    trafficChartObj.update();
+  }
 }
 
 // Initialize System
